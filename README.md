@@ -2,9 +2,9 @@
 ---
 
 ```md
-# My Project – Frontend & Backend
+# Source-Base-VH — Hướng dẫn chạy nhanh (Backend)
 
-Dự án bao gồm **Frontend**, **Backend** và **PostgreSQL** được quản lý trong cùng một repository.  
+> Tài liệu này tập trung vào **Backend** (Node + TypeScript + Prisma + PostgreSQL). Phần Frontend có thể có hướng dẫn tương tự trong `frontend/`.
 
 ---
 
@@ -89,25 +89,62 @@ PostgreSQL chạy tại:
 
 ---
 
-## 🧠 Backend – Cách chạy
+## 🧠 Backend — Hướng dẫn chạy chi tiết
 
+### 1) Lấy code & vào thư mục backend
 ```bash
-cd backend
+git clone <repo-url>
+cd Source-Base-VH/backend
+```
+
+### 2) Tạo file `.env`
+Tạo `backend/.env` với tối thiểu các biến:
+```
+PORT=3000
+DATABASE_URL=postgresql://user:password@localhost:5432/VH_DB
+PRISMA_CLIENT_ENGINE_TYPE=binary
+```
+
+### 3) Cài dependencies
+```bash
 npm install
+```
+
+### 4) Prisma — generate & migrate
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+# hoặc nếu không dùng migration:
+npx prisma db push
+```
+
+### 5) Chạy server
+- Dev (hot-reload):
+```bash
 npm run dev
 ```
-
-Backend chạy mặc định tại:
-
+- Build & run:
+```bash
+npm run build
+npm start
 ```
-http://localhost:3000
-```
 
-Ví dụ API test:
+Server mặc định: `http://localhost:3000` — Base API: `http://localhost:3000/api`
 
-```
-GET http://localhost:3000/api/hello
-```
+### 6) Scripts hữu ích (seed / check / list)
+- Seed products: `npm run seed` (-> `node scripts/seedProducts.js`)
+- Seed blogs: `npm run seed:blogs` (-> `node scripts/seedBlogs.js`)
+- Delete sample products: `npm run clean:samples`
+- List products: `node scripts/listProducts.js`
+- List blogs: `node scripts/listBlogs.js`
+- Check product count: `node scripts/checkProducts.js`
+
+---
+
+**Ví dụ API nhanh:**
+- GET products: `GET http://localhost:3000/api/products`
+- POST product: `POST http://localhost:3000/api/products` (JSON body: `name`, `price`, `description`, `image`)
+
 
 ---
 
@@ -162,5 +199,20 @@ fetch("http://localhost:3000/api/hello")
 
 ---
 
+## 🛠️ Troubleshooting nhanh
+- **Lỗi Prisma (engine/adapter):** kiểm tra `PRISMA_CLIENT_ENGINE_TYPE` trong `.env` (ví dụ `binary`) → chạy `npx prisma generate`. Nếu runtime yêu cầu `adapter`, cài `npm install @prisma/adapter-pg`.
+- **Server không khởi động:** kiểm tra console logs, chạy `npm run build` để xem lỗi TypeScript, đảm bảo `.env` có `PORT` và `DATABASE_URL` đúng.
+- **PowerShell:** Dùng `;` để nối nhiều lệnh (ví dụ: `cd backend; npm run dev`) — `&&` có thể không hoạt động ở PowerShell.
+
+---
+
+## ✨ Gợi ý nâng cao
+- Tạo script `setup.ps1` để tự động: cài dependencies, tạo `.env.example`, `npx prisma generate`, `npm run build`.
+- Làm seed idempotent (upsert theo `name`) để tránh chèn trùng khi chạy seed nhiều lần.
+- Thêm Postman collection: `backend/postman_collection.json` (đã có sẵn).
+
+---
+
+Nếu bạn muốn, tôi có thể **TỰ ĐỘNG HÓA** việc thiết lập (tạo file `setup.ps1`) hoặc **viết importer CSV/JSON** để import dữ liệu thật (upsert). Chọn 1, tôi sẽ làm tiếp.
 
 ```
