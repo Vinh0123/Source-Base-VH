@@ -1,31 +1,58 @@
-import React from 'react';
+'use client';
+
 import { Link } from 'react-router-dom';
 import type { Blog } from '../core/types';
 
-export default function BlogCard({ blog }: { blog: Blog }) {
+interface BlogCardProps {
+  blog: Blog;
+}
+
+export default function BlogCard({ blog }: BlogCardProps) {
   return (
-    <article className="flex w-full max-w-md flex-col justify-between rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-[0_18px_45px_rgba(15,23,42,0.9)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_55px_rgba(129,140,248,0.6)]">
-      <div>
-        <h4 className="mb-1 line-clamp-2 text-sm font-semibold text-slate-50">{blog.title}</h4>
-        <p className="mb-2 line-clamp-3 text-xs text-slate-400">
-          {blog.excerpt || blog.content.slice(0, 120)}
-        </p>
-        <div className="mb-3 text-[11px] font-medium uppercase tracking-wide text-slate-500">
-          By {blog.author || 'Anonymous'}
+    <Link
+      to={`/blogs/${blog.id}`}
+      className="group block h-full rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition"
+    >
+      <div className="h-full flex flex-col bg-white">
+        {/* Image placeholder */}
+        <div className="aspect-video bg-stone-100 overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center text-3xl group-hover:scale-105 transition-transform duration-300">
+            📖
+          </div>
+        </div>
+
+        {/* Card content */}
+        <div className="p-6 flex flex-col flex-1">
+          {/* Date */}
+          {blog.createdAt && (
+            <p className="text-xs text-gray-500 mb-3 uppercase tracking-wide font-medium">
+              {new Date(blog.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          )}
+
+          {/* Title */}
+          <h3 className="font-serif text-lg leading-tight text-charcoal mb-3 group-hover:text-sage transition">
+            {blog.title}
+          </h3>
+
+          {/* Description
+          {blog.description && (
+            <p className="text-sm text-gray-600 leading-relaxed mb-4 flex-1">
+              {blog.description.substring(0, 100)}
+              {blog.description.length > 100 ? "..." : ""}
+            </p>
+          )} */}
+
+          {/* Read more link */}
+          <div className="text-xs font-medium uppercase tracking-widest text-sage group-hover:text-sage/80 transition">
+            Read Story →
+          </div>
         </div>
       </div>
-
-      <div className="mt-2 flex items-center justify-between text-xs font-medium text-violet-300">
-        <Link to={`/blogs/${blog.id}`} className="hover:underline hover:text-cyan-300">
-          Read article
-        </Link>
-        <Link
-          to={`/blogs/${blog.id}/edit`}
-          className="text-slate-400 hover:text-violet-300 hover:underline"
-        >
-          Edit
-        </Link>
-      </div>
-    </article>
+    </Link>
   );
 }
