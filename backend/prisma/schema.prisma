@@ -1,19 +1,30 @@
 generator client {
-  provider = "prisma-client-js"
-  engineType = "binary"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"] // <--- Add this line
+  // engineType = "library"            // This is the default for adapters, but ensure it's not "binary"
 }
+
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   price       Float
   description String?
-  image       String?
-  createdAt   DateTime @default(now())
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now())
 }
 
 model Blog {
