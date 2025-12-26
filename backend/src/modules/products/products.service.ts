@@ -9,14 +9,16 @@ export class ProductsService {
   }
 
   async findAll(pageOptions: PageOptionsDto) {
-    const [items, total] = await Promise.all([
-      prisma.product.findMany({
-        skip: pageOptions.skip,
-        take: pageOptions.limit,
-        orderBy: { createdAt: "desc" }
-      }),
-      prisma.product.count()
-    ]);
+    const { page, limit } = pageOptions;
+    const skip = (page - 1) * limit;
+
+    const items = await prisma.product.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+
+    const total = await prisma.product.count();
 
     return { items, total };
   }

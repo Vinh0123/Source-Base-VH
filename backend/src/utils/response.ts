@@ -1,0 +1,7 @@
+export const successResponse = (data: any, message = 'Success') => {
+  return {
+    success: true,
+    message,
+    data,
+  };
+};
